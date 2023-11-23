@@ -2,6 +2,8 @@
 
 ## Summary
 
+node version - 18.17.1
+
 Short summary on functionality and used technologies.
 
 [picture of the solution in action, if possible]

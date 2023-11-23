@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "equipment-edit-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/equipmentEdit/EquipmentEditWebPart.js",
+          "manifest": "./src/webparts/equipmentEdit/EquipmentEditWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "EquipmentEditWebPartStrings": "lib/webparts/equipmentEdit/loc/{locale}.js"
+  }
+}

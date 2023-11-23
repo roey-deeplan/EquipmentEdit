@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "equipment-edit-client-side-solution",
+    "id": "614a1efc-a1d6-4f28-9d14-18ca2bfd00b1",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "equipment-edit description"
+      },
+      "longDescription": {
+        "default": "equipment-edit description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "equipment-edit Feature",
+        "description": "The feature that activates elements of the equipment-edit solution.",
+        "id": "a1efeaff-05ec-41ae-9532-47b831cf44b7",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/equipment-edit.sppkg"
+  }
+}

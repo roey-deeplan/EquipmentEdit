@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "18.17.1",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.12.0"
+    },
+    "version": "1.18.0",
+    "libraryName": "equipment-edit",
+    "libraryId": "614a1efc-a1d6-4f28-9d14-18ca2bfd00b1",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "equipment-edit",
+    "solutionShortDescription": "equipment-edit description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

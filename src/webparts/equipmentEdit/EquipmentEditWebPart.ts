@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
@@ -11,9 +12,16 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'EquipmentEditWebPartStrings';
 import EquipmentEdit from './components/EquipmentEdit';
 import { IEquipmentEditProps } from './components/IEquipmentEditProps';
+import { PropertyFieldListPicker, PropertyFieldListPickerOrderBy } from '@pnp/spfx-property-controls/lib/PropertyFieldListPicker';
 
+const { solution } = require('../../../config/package-solution.json')
 export interface IEquipmentEditWebPartProps {
-  description: string;
+  FormName: string;
+  companyDepartmentsList: string;
+  ordersList: string;
+  equipmentList: string;
+  ReturnLink: string;
+  LinkToEditForm: string;
 }
 
 export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipmentEditWebPartProps> {
@@ -25,11 +33,15 @@ export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipme
     const element: React.ReactElement<IEquipmentEditProps> = React.createElement(
       EquipmentEdit,
       {
-        description: this.properties.description,
-        isDarkTheme: this._isDarkTheme,
-        environmentMessage: this._environmentMessage,
-        hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        userDisplayName: this.context.pageContext.user.displayName,
+        context: this.context,
+        siteUrl: this.context.pageContext.web.absoluteUrl,
+        FormName: this.properties.FormName,
+        companyDepartmentsList: this.properties.companyDepartmentsList,
+        ordersList: this.properties.ordersList,
+        equipmentList: this.properties.equipmentList,
+        ReturnLink: this.properties.ReturnLink,
+        LinkToEditForm: this.properties.LinkToEditForm,
       }
     );
 
@@ -94,7 +106,7 @@ export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipme
   }
 
   protected get dataVersion(): Version {
-    return Version.parse('1.0');
+    return Version.parse(solution.version);
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
@@ -108,9 +120,54 @@ export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipme
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                })
+                PropertyPaneTextField('FormName', {
+                  label: "כותרת"
+                }),
+                PropertyFieldListPicker('companyDepartmentsList', {
+                  label: 'בחר רשימת מחלקות',
+                  selectedList: this.properties.companyDepartmentsList,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context as any,
+                  onGetErrorMessage: null as any,
+                  deferredValidationTime: 0,
+                  key: 'listPickerFieldId'
+                }),
+                PropertyFieldListPicker('ordersList', {
+                  label: 'בחר רשימת הזמנות',
+                  selectedList: this.properties.ordersList,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context as any,
+                  onGetErrorMessage: null as any,
+                  deferredValidationTime: 0,
+                  key: 'listPickerFieldId'
+                }),
+                PropertyFieldListPicker('equipmentList', {
+                  label: 'בחר רשימת ציוד',
+                  selectedList: this.properties.equipmentList,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context as any,
+                  onGetErrorMessage: null as any,
+                  deferredValidationTime: 0,
+                  key: 'listPickerFieldId'
+                }),
+                PropertyPaneTextField('ReturnLink', {
+                  label: "קישור חזרה (בלחיצה על ביטול או שמירה)"
+                }),
+                PropertyPaneTextField('LinkToEditForm', {
+                  label: "קישור לטופס עריכה"
+                }),
               ]
             }
           ]

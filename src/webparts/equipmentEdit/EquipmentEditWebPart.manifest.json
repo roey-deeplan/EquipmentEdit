@@ -4,25 +4,27 @@
   "alias": "EquipmentEditWebPart",
   "componentType": "WebPart",
 
-  // The "*" signifies that the version should be taken from the package.json
   "version": "*",
   "manifestVersion": 2,
 
-  // If true, the component can only be installed on sites where Custom Script is allowed.
-  // Components that allow authors to embed arbitrary script code should set this to true.
-  // https://support.office.com/en-us/article/Turn-scripting-capabilities-on-or-off-1f2c515f-5d7e-448a-9fd7-835da935584f
   "requiresCustomScript": false,
   "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
   "supportsThemeVariants": true,
 
   "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", // Advanced
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
     "group": { "default": "Advanced" },
     "title": { "default": "EquipmentEdit" },
     "description": { "default": "EquipmentEdit description" },
-    "officeFabricIconFontName": "Page",
+    "officeFabricIconFontName": "TextDocumentEdit",
     "properties": {
-      "description": "EquipmentEdit"
+      "description": "EquipmentNew",
+      "FormName": "הזמנות ציוד",
+      "companyDepartmentsList": "3c47156f-5b56-4df1-bd20-1c552ae726cd",
+      "ordersList": "00583fef-722f-44cf-96de-5ca85b4285a2",
+      "equipmentList": "09b790ea-ae88-4ba3-95b2-85f287eb2166",
+      "ReturnLink": "https://projects1.sharepoint.com/sites/DeeplanPortal/Lists/EquipmentOrders/AllItems.aspx",
+      "LinkToEditForm": "https://projects1.sharepoint.com/sites/DeeplanPortal/SitePages/EquipmentEdit.aspx?source=https%3A%2F%2Fprojects1.sharepoint.com%2Fsites%2FDeeplanPortal%2FSitePages%2FForms%2FByAuthor.aspx"
     }
   }]
 }

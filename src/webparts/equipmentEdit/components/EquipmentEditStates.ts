@@ -22,4 +22,9 @@ export interface IEquipmentEditStates {
     wearIsShown: boolean;
     formId: number;
     formIsActiveStatus: boolean;
+    departmentManager: string;
+    departmentManagerRole: string;
+    userName: string;
+    Email: string;
+    CEOName: string;
 }

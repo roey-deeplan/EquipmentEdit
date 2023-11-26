@@ -5,7 +5,7 @@ import type { IEquipmentEditProps } from './IEquipmentEditProps';
 import { IEquipmentEditStates } from './EquipmentEditStates';
 import Swal from 'sweetalert2'
 import {
-  Popover, PopoverHeader, PopoverBody, Fade
+  Popover, PopoverHeader, PopoverBody, Fade, Input, InputGroup, Container
 } from 'reactstrap';
 import { ThemeProvider, StylesProvider } from "@material-ui/core/styles"
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo"
@@ -26,6 +26,7 @@ import { IoCloseCircleOutline } from "react-icons/io5"
 import stylisRTLPlugin from "stylis-plugin-rtl";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import { Item } from '@pnp/sp/items';
 const { solution } = require('../../../../config/package-solution.json')
 
 export default class EquipmentEdit extends React.Component<IEquipmentEditProps, IEquipmentEditStates> {
@@ -54,7 +55,12 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
       selectedHardwareTypesValidationError: false,
       ValidationError: false,
       formId: 0,
-      formIsActiveStatus: false
+      formIsActiveStatus: false,
+      departmentManager: "",
+      departmentManagerRole: "",
+      userName: "",
+      Email: "",
+      CEOName: "",
     }
   }
 
@@ -82,29 +88,47 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
   }
 
   ResetForm() {
-    // get all the items from the list 'Company Departments'.
-    this.sp.web.lists.getById(this.props.companyDepartmentsList).items().then((companies: string[]) => {
-      this.setState({ companyDepartments: companies, })
-    }).then(() => {
-      this.sp.web.lists.getById(this.props.equipmentList).items().then((equipments: any[]) => {
-        let hwList: string[] = equipments.map((equipment) => equipment.Title);
-        this.setState({ hardwareTypesList: hwList })
+    // get the item by id in the url
+    const url = new URL(window.location.href);
+    const FormID = Number(url.searchParams.get("FormID"));
+    this.sp.web.lists.getById(this.props.ordersList).items.getById(75)().then((item: any) => {
+      //console.log('item:', item)
+      this.setState({
+        userName: item.Title,
+        requestDate: item.DateOfRequest,
+        userDepartment: item.Department,
+        hardwareTypesList: item.HardwareType,
+        orderReason: item.OrderReason,
+        wearDescription: item.WearDescription === null || item.WearDescription === undefined ? "" : item.WearDescription,
+        wearIsShown: item.WearDescription === null || item.WearDescription === undefined || item.WearDescription === "" ?
+          false : true,
+        requestDetail: item.DetailRequest,
+        Email: item.Email
       })
-      // get current user
-      this.sp.web.currentUser.select()().then((user: any) => {
-        this.setState({ currentUser: user, })
-        // Choose which group title is attached to the user
-        this.sp.web.siteUsers.getById(user.Id).groups().then((groups: any) => {
-          if (groups.some((group: any) => group.Title === "מחלקת פיתוח")) {
-            this.companyDepartmentHandler("פיתוח")
-          } else if (groups.some((group: any) => group.Title === "מחלקת גיוס")) {
-            this.companyDepartmentHandler("גיוס")
-          } else if (groups.some((group: any) => group.Title === "מחלקת חומרה")) {
-            this.companyDepartmentHandler("חומרה")
-          } else {
-            this.companyDepartmentHandler("אחר")
-          }
-          this.setState({ isLoading: false, formIsActiveStatus: true })
+    }).then(() => {
+      // get all the items from the list 'Company Departments'.
+      this.sp.web.lists.getById(this.props.companyDepartmentsList).items().then((companies: string[]) => {
+        this.setState({ companyDepartments: companies })
+        console.log('companies:', companies)
+      }).then(() => {
+        // get current user
+        const userEmail = this.state.Email
+        this.sp.web.siteUsers.getByEmail(userEmail)().then((user: any) => {
+          //console.log('user:', user)
+          this.setState({ currentUser: user, })
+          // Choose which group title is attached to the user
+          this.sp.web.siteUsers.getById(user.Id).groups().then((groups: any) => {
+            if (groups.some((group: any) => group.Title === "מחלקת פיתוח")) {
+              this.companyDepartmentHandler("פיתוח")
+            } else if (groups.some((group: any) => group.Title === "מחלקת גיוס")) {
+              this.companyDepartmentHandler("גיוס")
+            } else if (groups.some((group: any) => group.Title === "מחלקת חומרה")) {
+              this.companyDepartmentHandler("חומרה")
+            } else {
+              this.companyDepartmentHandler("אחר")
+            }
+            this.setState({ isLoading: false, formIsActiveStatus: true })
+          })
         }).catch((error: any) => console.error(error))
       }).catch((error: any) => console.error(error))
     }).catch((error: any) => console.error(error))
@@ -239,9 +263,11 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
   // Change the state of the user department
   companyDepartmentHandler(Department: string) {
     const department = this.state.companyDepartments.find((company: any) => company.Title === Department)
+    console.log('department:', department)
     this.setState({
-      userDepartment: department?.Title,
       departmentId: department?.Id,
+      departmentManager: department?.DepartmentManagerName,
+      departmentManagerRole: department?.Role
     })
   }
 
@@ -368,7 +394,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                           personSelectionLimit={1}
                           showtooltip={false}
                           required={true}
-                          defaultSelectedUsers={[this.state.currentUser && this.state.currentUser.Email]}
+                          defaultSelectedUsers={[this.state.userName]}
                           onChange={(event) => this.userHandler(event)}
                           principalTypes={[1]}
                           disabled
@@ -430,11 +456,10 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                           options={this.state.hardwareTypesList}
                           multiple
                           onChange={this.hardwareTypeHandler}
-                          value={this.state.selectedHardwareTypes}
+                          value={this.state.hardwareTypesList}
                           renderInput={(params) => (
                             <TextField
                               className={styles.textFieldHw}
-                              placeholder={this.state.isHWPlaceholderVisible ? '' : 'בחר/י'}
                               required
                               variant="standard"
                               helperText={this.state.selectedHardwareTypesValidationError ? 'נא לבחור לפחות פריט אחד' : ""}
@@ -522,7 +547,248 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                     <div className={styles.approvalStatusTitle}>
                       <h4>אישורים</h4>
                     </div>
+                    <div className={styles.tableDiv}>
+                      <table className="table text-center">
+                        <thead>
+                          <tr>
+                            <th>שם המאשר</th>
+                            <th>תפקיד</th>
+                            <th>סטטוס</th>
+                            <th>חתימה</th>
+                            <th>הערות</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <TextField size='small' disabled label={this.state.departmentManager}></TextField>
+                            </td>
+                            <td >
+                              <TextField size='small' disabled label={this.state.departmentManagerRole}></TextField>
+                            </td>
+                            <td>
+                              <FormControl size='small' variant="outlined">
+                                <Select
+                                  value={"מאושר"}
+                                  defaultValue={"מאושר"}
+                                  inputProps={{ 'aria-label': 'Without label' }}
+                                >
+                                  <MenuItem value={'מאושר'}>מאושר</MenuItem>
+                                  <MenuItem value={'לא מאושר'}>לא מאושר</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </td>
+                            <td>
+                              <TextField size='small' disabled label={"חתימה"}></TextField>
+                            </td>
+                            <td>
+                              <TextField size='small' label={"הערות"} multiline rows={2} ></TextField>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <TextField size='small' disabled label={'מנכ"ל'} value={'מנכ"ל'}></TextField>
+                            </td>
+                            <td>
+                              <TextField size='small' disabled label={'מנכ"ל'} value={'מנכ"ל'}></TextField>
+                            </td>
+                            <td>
+                              <FormControl size='small' variant="outlined">
+                                <Select
+                                  value={"מאושר"}
+                                  defaultValue={"מאושר"}
+                                  inputProps={{ 'aria-label': 'Without label' }}
+                                >
+                                  <MenuItem value={'מאושר'}>מאושר</MenuItem>
+                                  <MenuItem value={'לא מאושר'}>לא מאושר</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </td>
+                            <td>
+                              <TextField size='small' disabled label={"חתימה"}></TextField>
+                            </td>
+                            <td>
+                              <TextField size='small' label={"הערות"} multiline rows={2}></TextField>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <Container className="mt-5">
+                      <div>
+                        <div>
+                          <table className="table text-center">
+                            <thead>
+                              <tr>
+                                <th>שם המאשר</th>
+                                <th>תפקיד</th>
+                                <th>סטטוס</th>
+                                <th>חתימה</th>
+                                <th>הערות</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      value={this.state.currentUser.Title}
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      // value={
+                                      //   this.state.CompanyDepartments as any
+                                      // }
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <div className="box mt-1">
+                                    <Autocomplete
+                                      // value={this.state.approvalDManagerStatus}
+                                      // disabled={
+                                      //   this.state.currentUserId !==
+                                      //   this.state.DManagerId
+                                      // }
+                                      defaultValue="בחר"
+                                      options={["לא מאושר", "מאושר", "בחר"]}
+                                      // onChange={approvalDManagerStatusChange}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          style={{
+                                            padding: 0,
+                                            textAlign: "center",
+                                            width: 180,
+                                          }}
+                                          variant="standard"
+                                          {...params}
+                                        />
+                                      )}
+                                    />
+                                  </div>
+                                </td>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      // value={
+                                      //   this.state.approvalDManagerStatus ===
+                                      //     "בחר"
+                                      //     ? ""
+                                      //     : this.state.DManagerSignature
+                                      // }
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <div>
+                                    <TextField
+                                      // onChange={DManagerRemarksChange}
+                                      // disabled={
+                                      //   this.state.currentUserId !==
+                                      //   this.state.DManagerId
+                                      // }
+                                      multiline
+                                      style={{
+                                        padding: 0,
+                                        textAlign: "center",
+                                        width: 180,
+                                      }}
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      //value={this.state.DManagerName}
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      // value={
+                                      //   this.state.CompanyDepartments as any
+                                      // }
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <div className="box mt-1">
+                                    <Autocomplete
+                                      // value={this.state.approvalDManagerStatus}
+                                      // disabled={
+                                      //   this.state.currentUserId !==
+                                      //   this.state.DManagerId
+                                      // }
+                                      defaultValue="בחר"
+                                      options={["לא מאושר", "מאושר", "בחר"]}
+                                      // onChange={approvalDManagerStatusChange}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          style={{
+                                            padding: 0,
+                                            textAlign: "center",
+                                            width: 180,
+                                          }}
+                                          variant="standard"
+                                          {...params}
+                                        />
+                                      )}
+                                    />
+                                  </div>
+                                </td>
+                                <td>
+                                  <InputGroup>
+                                    <Input
+                                      // value={
+                                      //   this.state.approvalDManagerStatus ===
+                                      //     "בחר"
+                                      //     ? ""
+                                      //     : this.state.DManagerSignature
+                                      // }
+                                      disabled
+                                    />
+                                  </InputGroup>
+                                </td>
+                                <td>
+                                  <div>
+                                    <TextField
+                                      // onChange={DManagerRemarksChange}
+                                      // disabled={
+                                      //   this.state.currentUserId !==
+                                      //   this.state.DManagerId
+                                      // }
+                                      multiline
+                                      style={{
+                                        padding: 0,
+                                        textAlign: "center",
+                                        width: 180,
+                                      }}
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                      </div>
+                    </Container>
                     <form>
+
                       <ThemeProvider theme={ButtonsTheme}>
                         <div className={styles.FormButtons}>
                           <Button

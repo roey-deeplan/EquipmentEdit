@@ -27,4 +27,13 @@ export interface IEquipmentEditStates {
     userName: string;
     Email: string;
     CEOName: string;
+    statusApproval: string;
+    DPMStatusApproval: string;
+    CEOStatusApproval: string;
+    isManager: boolean;
+    departmentManagerSignture: string;
+    CEOSignture: string;
+    departmentManagerNotes: string;
+    CEONotes: string;
+    isCEO: boolean;
 }

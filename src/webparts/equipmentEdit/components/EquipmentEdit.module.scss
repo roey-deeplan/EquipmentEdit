@@ -1,16 +1,16 @@
 @import "~@fluentui/react/dist/sass/References.scss";
 
-div[id="workbenchPageContent"] {
-  max-width: 1280px !important;
-}
+// div[id="workbenchPageContent"] {
+//   max-width: 1280px !important;
+// }
 
-div[data-automation-id="CanvasZone"] {
-  max-width: 1280px !important;
-}
+// div[data-automation-id="CanvasZone"] {
+//   max-width: 1280px !important;
+// }
 
-div[role="tooltip"] {
-  z-index: 1298 !important;
-}
+// div[role="tooltip"] {
+//   z-index: 1298 !important;
+// }
 
 :root {
   --main-color: #166ca4;
@@ -46,6 +46,7 @@ div[data-automation-id="CanvasZone"] {
   border-radius: 1%;
   background-color: white;
   min-height: 400px;
+  font-family: "Inter", sans-serif !important;
 }
 .RotatedIcon {
   -webkit-transform: scaleX(-1);
@@ -802,7 +803,8 @@ div[data-automation-id="CanvasZone"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2%;
+  padding: 1%;
+  padding-top: 2%;
 }
 
 .approvalHeadlines {
@@ -835,6 +837,74 @@ div[data-automation-id="CanvasZone"] {
 .tableDiv {
   overflow-x: auto;
 }
+
+.statusSelection {
+  > :nth-child(1) {
+    min-width: 10rem;
+  }
+}
+
+.textFieldsApprovals {
+  min-width: 10rem;
+}
+/* Status Buttons */
+.statusApprovals {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1%;
+  padding-right: 2%;
+  > :nth-child(1) {
+    font: bold;
+    font-size: medium;
+  }
+  > :nth-child(2) {
+    display: flex;
+    justify-content: center;
+  }
+}
+.innerStatus {
+  font-size: larger;
+}
+
+.checkStatus {
+  width: 25px;
+  height: 25px;
+  border-radius: 1000px;
+  background: linear-gradient(90deg, #84c78b 0%, #68ae6f 100%);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rejectStatus {
+  width: 25px;
+  height: 25px;
+  border-radius: 1000px;
+  background: linear-gradient(89.35deg, #c04a4a -0.03%, #ac3333 97.19%);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.progressStatus {
+  width: 25px;
+  height: 25px;
+  border-radius: 1000px;
+  background: linear-gradient(267.35deg, #f5d686 2.77%, #efc457 95.87%);
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Query */
 @media only screen and (min-width: 1285px) {
   .EOHeader {

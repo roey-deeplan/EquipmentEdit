@@ -9,4 +9,5 @@ export interface IEquipmentEditProps {
   equipmentList: string; // Stores the ID's list
   ReturnLink: string;
   LinkToEditForm: string;
+  CEOEmail: string;
 }

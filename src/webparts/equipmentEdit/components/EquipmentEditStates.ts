@@ -36,4 +36,8 @@ export interface IEquipmentEditStates {
     departmentManagerNotes: string;
     CEONotes: string;
     isCEO: boolean;
+    isManagerOwnRequest: boolean;
+    statusApprovalText: string;
+    nextApprovalText: string;
+    nextApprovalPP: any;
 }

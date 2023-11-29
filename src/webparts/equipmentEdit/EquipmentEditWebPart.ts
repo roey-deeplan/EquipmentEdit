@@ -22,6 +22,7 @@ export interface IEquipmentEditWebPartProps {
   equipmentList: string;
   ReturnLink: string;
   LinkToEditForm: string;
+  CEOEmail: string;
 }
 
 export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipmentEditWebPartProps> {
@@ -42,6 +43,7 @@ export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipme
         equipmentList: this.properties.equipmentList,
         ReturnLink: this.properties.ReturnLink,
         LinkToEditForm: this.properties.LinkToEditForm,
+        CEOEmail: this.properties.CEOEmail
       }
     );
 
@@ -167,6 +169,9 @@ export default class EquipmentEditWebPart extends BaseClientSideWebPart<IEquipme
                 }),
                 PropertyPaneTextField('LinkToEditForm', {
                   label: "קישור לטופס עריכה"
+                }),
+                PropertyPaneTextField('CEOEmail', {
+                  label: 'מייל המנכ"ל'
                 }),
               ]
             }

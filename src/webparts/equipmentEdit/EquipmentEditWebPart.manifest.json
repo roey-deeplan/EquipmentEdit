@@ -10,6 +10,7 @@
   "requiresCustomScript": false,
   "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
   "supportsThemeVariants": true,
+  "supportsFullBleed": true,
 
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
@@ -24,7 +25,8 @@
       "ordersList": "00583fef-722f-44cf-96de-5ca85b4285a2",
       "equipmentList": "09b790ea-ae88-4ba3-95b2-85f287eb2166",
       "ReturnLink": "https://projects1.sharepoint.com/sites/DeeplanPortal/Lists/EquipmentOrders/AllItems.aspx",
-      "LinkToEditForm": "https://projects1.sharepoint.com/sites/DeeplanPortal/SitePages/EquipmentEdit.aspx?source=https%3A%2F%2Fprojects1.sharepoint.com%2Fsites%2FDeeplanPortal%2FSitePages%2FForms%2FByAuthor.aspx"
+      "LinkToEditForm": "https://projects1.sharepoint.com/sites/DeeplanPortal/SitePages/EquipmentEdit.aspx",
+      "CEOEmail": "carmi@deeplan.co.il"
     }
   }]
 }

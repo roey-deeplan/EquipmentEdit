@@ -18,7 +18,7 @@ import { jss } from "../models/jss"
 import { theme } from "../models/theme"
 import { ButtonsTheme } from "../models/ButtonsTheme"
 import { Select, TextField, FormControl, MenuItem, Autocomplete, Chip, Tooltip, Alert } from "@mui/material"
-import { Button } from "@material-ui/core"
+import { Button, colors } from "@material-ui/core"
 import { AiOutlineSend, AiOutlineCheck, AiOutlineClose } from "react-icons/ai"
 import { BsThreeDots } from "react-icons/bs";
 import { IoCloseCircleOutline } from "react-icons/io5"
@@ -78,7 +78,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
   }
 
   public sp: any
-  public id: number = 99
+  public id: number = 130
 
   // Use for direction rtl
   cacheRtl = createCache({
@@ -107,7 +107,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
     const FormID = Number(url.searchParams.get("FormID"))
     this.sp.web.lists
       .getById(this.props.ordersList)
-      .items.getById(FormID)()
+      .items.getById(this.id)()
       .then((item: any) => {
         this.setState({
           formId: FormID,
@@ -164,6 +164,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
             //const userEmail = "pnina@deeplan.co.il" //this.state.Email
             //const userEmail = "liron@deeplan.co.il" //this.state.Email
             //const userEmail = "carmi@deeplan.co.il" //this.state.Email
+            //const userEmail = "ben@deeplan.co.il" //this.state.Email
             //const userEmail = this.state.Email
             this.sp.web
               .currentUser
@@ -191,7 +192,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
     if (this.ValidateSubmit()) {
       const list = this.sp.web.lists.getById(this.props.ordersList)
       list.items
-        .getById(this.state.formId)
+        .getById(this.id)
         .update({
           DepartmentManagerStatus: this.state.DPMStatusApproval,
           CEOStatus: this.state.CEOStatusApproval,
@@ -277,7 +278,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
       return
     }
     // Check if the current user is the CEO
-    if (this.state.currentUser.Email.toLowerCase() === this.props.CEOEmail) {
+    if (this.state.currentUser.Email.toLowerCase() === this.props.CEOEmail.toLowerCase()) {
       // If the user is CEO, check if the user that requested the request is the department manager
       if (department?.DepartmentManagerEmail.toLowerCase() === this.state.Email.toLowerCase()) {
         this.setState({
@@ -305,6 +306,11 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
         this.setState({
           isManager: true,
         })
+        if (this.state.DPMStatusApproval === "מאושר" || this.state.DPMStatusApproval === "לא מאושר") {
+          this.setState({
+            isManager: false
+          })
+        }
       }
     }
   }
@@ -322,7 +328,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
           })
           // Choose which group title is attached to the user
           this.sp.web.siteUsers
-            .getById(user.Id)
+            .getById(this.state.formId)
             .groups()
             .then((groups: any) => {
               if (groups.some((group: any) => group.Title === "מחלקת פיתוח")) {
@@ -399,12 +405,13 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
     if (event.target.value === "מאושר" || event.target.value === "לא מאושר") {
       this.setState({
         departmentManagerSignture: this.state.currentUser.Title + " " + this.ConvertToDisplayDate(new Date()),
+
       })
       if (event.target.value === "מאושר") {
         this.sp.web.siteUsers.getByEmail(this.props.CEOEmail)().then((user: any) => {
           this.setState({
             nextApprovalPP: user,
-            nextApprovalText: user.Title
+            nextApprovalText: user.Title,
           })
         })
       } else if (event.target.value === "לא מאושר") {
@@ -657,7 +664,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                       </div>
                     </div>
                     <div className={styles.tableDiv}>
-                      <table className="table text-center">
+                      <table className={'table text-center'}>
                         <thead>
                           <tr>
                             <th>שם המאשר</th>
@@ -670,10 +677,10 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                         <tbody>
                           {!this.state.isManagerOwnRequest ? <tr>
                             <td >
-                              <TextField size="small" disabled label={this.state.departmentManager}></TextField>
+                              <TextField size="small" disabled value={this.state.departmentManager}></TextField>
                             </td>
                             <td >
-                              <TextField size="small" disabled label={this.state.departmentManagerRole}></TextField>
+                              <TextField size="small" disabled value={this.state.departmentManagerRole}></TextField>
                             </td>
                             <td>
                               <FormControl size="small" variant="outlined" className={styles.statusSelection}>
@@ -685,6 +692,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                                     this.statusApprovalChangeDPM(event)
                                   }}
                                   disabled={!this.state.isManager}
+                                  className={styles.blackText}
                                 >
                                   <MenuItem value={"בחר"}>בחר</MenuItem>
                                   <MenuItem value={"מאושר"}>מאושר</MenuItem>
@@ -711,7 +719,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                               <TextField size="small" disabled value={this.state.CEOName}></TextField>
                             </td>
                             <td>
-                              <TextField size="small" disabled value={'מנכ"ל'}></TextField>
+                              <TextField size="small" disabled value={'מנכ"ל החברה'}></TextField>
                             </td>
                             <td>
                               <FormControl size="small" variant="outlined" className={styles.statusSelection}>
@@ -736,16 +744,29 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                                 size="small"
                                 onChange={(event) => this.setState({ CEONotes: event.target.value })}
                                 value={this.state.CEONotes}
-                                disabled={this.state.isCEO}
+                                disabled={!this.state.isCEO}
                                 multiline
                                 minRows={2}
-
                               ></TextField>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    {this.state.isLoading ?
+                      <div >
+                        <div className={styles.SavingLoader}>
+                          <div className={styles.loaderContainer}>
+                            <div className={styles.loader}>
+                              <div className={styles.ball}></div>
+                              <div className={styles.ball}></div>
+                              <div className={styles.ball}></div>
+                            </div>
+                          </div>
+                          <div className={styles.SavingLoadertext}>הטופס נטען למערכת...</div>
+                        </div>
+                      </div>
+                      : null}
                     <form>
                       <ThemeProvider theme={ButtonsTheme}>
                         <div className={styles.FormButtons}>

@@ -1,16 +1,16 @@
 @import "~@fluentui/react/dist/sass/References.scss";
 
-// div[id="workbenchPageContent"] {
-//   max-width: 1280px !important;
-// }
+div[id="workbenchPageContent"] {
+  max-width: 1280px !important;
+}
 
-// div[data-automation-id="CanvasZone"] {
-//   max-width: 1280px !important;
-// }
+div[data-automation-id="CanvasZone"] {
+  max-width: 1280px !important;
+}
 
-// div[role="tooltip"] {
-//   z-index: 1298 !important;
-// }
+div[role="tooltip"] {
+  z-index: 1298 !important;
+}
 
 :root {
   --main-color: #166ca4;
@@ -541,7 +541,6 @@ div[data-automation-id="CanvasZone"] {
   display: block;
   position: relative;
   text-align: center;
-  margin-top: 5%;
   margin-bottom: 8%;
 }
 
@@ -841,7 +840,29 @@ div[data-automation-id="CanvasZone"] {
 .statusSelection {
   > :nth-child(1) {
     min-width: 10rem;
+    // > :nth-child(1) {
+    //   color: black !important;
+    //   -webkit-text-fill-color: black !important;
+    // }
   }
+}
+
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border-style: none;
+}
+
+.tableDiv :disabled {
+  color: black !important;
+  -webkit-text-fill-color: black !important;
+}
+
+.blackText {
+  color: black !important;
 }
 
 .textFieldsApprovals {
@@ -903,6 +924,121 @@ div[data-automation-id="CanvasZone"] {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* SavingLoader */
+
+.SavingLoader {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 90px;
+  z-index: 100;
+}
+
+.SavingLoader .SavingLoadertext {
+  position: relative;
+  display: block;
+  float: right;
+  width: 100%;
+  height: 30px;
+  color: var(--main-color);
+  text-transform: uppercase;
+  font-size: 15px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.SavingLoader .loaderContainer {
+  position: relative;
+  display: block;
+  float: right;
+  width: 100%;
+  height: 60px;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 24px;
+  border-left: 8px solid var(--main-color);
+  border-right: 8px solid var(--main-color);
+  overflow: hidden;
+}
+
+.loader .ball {
+  height: 8px;
+  width: 0;
+  background: var(--main-color);
+  position: relative;
+  margin: 0;
+}
+
+.loader .ball:nth-child(1) {
+  -webkit-animation: ball 2s ease-in-out infinite;
+  animation: ball 2s ease-in-out infinite;
+}
+
+.loader .ball:nth-child(2) {
+  -webkit-animation: ball 2s ease-in-out 0.1s infinite;
+  animation: ball 2s ease-in-out 0.1s infinite;
+}
+
+.loader .ball:nth-child(3) {
+  -webkit-animation: ball 2s ease-in-out 0.2s infinite;
+  animation: ball 2s ease-in-out 0.2s infinite;
+}
+
+@-webkit-keyframes ball {
+  0% {
+    left: 0;
+    width: 0px;
+  }
+  25% {
+    left: 0;
+    width: 300px;
+  }
+  50% {
+    left: 300px;
+    width: 0px;
+  }
+  75% {
+    left: 0;
+    width: 300px;
+  }
+  100% {
+    left: 0;
+    width: 0px;
+  }
+}
+
+@keyframes ball {
+  0% {
+    left: 0;
+    width: 0px;
+  }
+  25% {
+    left: 0;
+    width: 300px;
+  }
+  50% {
+    left: 300px;
+    width: 0px;
+  }
+  75% {
+    left: 0;
+    width: 300px;
+  }
+  100% {
+    left: 0;
+    width: 0px;
+  }
 }
 
 /* Query */

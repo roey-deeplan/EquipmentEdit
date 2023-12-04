@@ -40,4 +40,6 @@ export interface IEquipmentEditStates {
     statusApprovalText: string;
     nextApprovalText: string;
     nextApprovalPP: any;
+    isSavingLoader: boolean;
+    isDPM: boolean;
 }

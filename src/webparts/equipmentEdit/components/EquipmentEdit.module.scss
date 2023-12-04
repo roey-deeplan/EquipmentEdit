@@ -1,16 +1,16 @@
 @import "~@fluentui/react/dist/sass/References.scss";
 
-div[id="workbenchPageContent"] {
-  max-width: 1280px !important;
-}
+// div[id="workbenchPageContent"] {
+//   max-width: 1280px !important;
+// }
 
-div[data-automation-id="CanvasZone"] {
-  max-width: 1280px !important;
-}
+// div[data-automation-id="CanvasZone"] {
+//   max-width: 1280px !important;
+// }
 
-div[role="tooltip"] {
-  z-index: 1298 !important;
-}
+// div[role="tooltip"] {
+//   z-index: 1298 !important;
+// }
 
 :root {
   --main-color: #166ca4;

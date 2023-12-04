@@ -74,6 +74,8 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
       statusApprovalText: "",
       nextApprovalText: "",
       nextApprovalPP: null,
+      isSavingLoader: false,
+      isDPM: false,
     }
   }
 
@@ -107,7 +109,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
     const FormID = Number(url.searchParams.get("FormID"))
     this.sp.web.lists
       .getById(this.props.ordersList)
-      .items.getById(this.id)()
+      .items.getById(FormID)()
       .then((item: any) => {
         this.setState({
           formId: FormID,
@@ -125,7 +127,8 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
           statusApproval: item.RequestStatus === null || item.RequestStatus === undefined || item.RequestStatus === "" ?
             "בתהליך אישורים" : item.RequestStatus,
           statusApprovalText: item.RequestStatus === null || item.RequestStatus === undefined || item.RequestStatus === "" ?
-            "בתהליך אישורים" : item.RequestStatus
+            "בתהליך אישורים" : item.RequestStatus,
+          isDPM: item.isDPM
         })
         if (item.DepartmentManagerStatus === "מאושר" || item.DepartmentManagerStatus === "לא מאושר") {
           this.setState({
@@ -187,12 +190,12 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
   onSubmitHandler = (event: any) => {
     event.preventDefault()
     this.setState({
-      isLoading: true,
+      isSavingLoader: true,
     })
     if (this.ValidateSubmit()) {
       const list = this.sp.web.lists.getById(this.props.ordersList)
       list.items
-        .getById(this.id)
+        .getById(this.state.formId)
         .update({
           DepartmentManagerStatus: this.state.DPMStatusApproval,
           CEOStatus: this.state.CEOStatusApproval,
@@ -204,11 +207,12 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
           DepartmentManagerApproval: this.state.departmentManager,
           DepartmentManagerRole: this.state.departmentManagerRole,
           NextApprovalText: this.state.nextApprovalText,
-          NextApprovalPPId: this.state.nextApprovalPP === null ? null : this.state.nextApprovalPP.Id
+          NextApprovalPPId: this.state.nextApprovalPP === null ? null : this.state.nextApprovalPP.Id,
+          isDPM: this.state.isDPM === true ? "yes" : "no",
         })
         .then(() => {
           this.setState({
-            isLoading: false,
+            isSavingLoader: false,
           })
           // Show a success message
           Swal.fire({
@@ -229,7 +233,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
         })
     } else {
       this.setState({
-        isLoading: false,
+        isSavingLoader: false,
       })
     }
   }
@@ -405,7 +409,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
     if (event.target.value === "מאושר" || event.target.value === "לא מאושר") {
       this.setState({
         departmentManagerSignture: this.state.currentUser.Title + " " + this.ConvertToDisplayDate(new Date()),
-
+        isDPM: true
       })
       if (event.target.value === "מאושר") {
         this.sp.web.siteUsers.getByEmail(this.props.CEOEmail)().then((user: any) => {
@@ -416,7 +420,9 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
         })
       } else if (event.target.value === "לא מאושר") {
         this.setState({
-          nextApprovalText: "-"
+          nextApprovalText: "-",
+          statusApproval: event.target.value,
+          nextApprovalPP: null
         })
       }
     } else {
@@ -436,6 +442,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
       this.setState({
         CEOSignture: this.state.currentUser.Title + " " + this.ConvertToDisplayDate(new Date()),
         statusApproval: event.target.value,
+        isDPM: true
       })
       if (event.target.value === "מאושר") {
         this.setState({
@@ -753,7 +760,7 @@ export default class EquipmentEdit extends React.Component<IEquipmentEditProps, 
                         </tbody>
                       </table>
                     </div>
-                    {this.state.isLoading ?
+                    {this.state.isSavingLoader ?
                       <div >
                         <div className={styles.SavingLoader}>
                           <div className={styles.loaderContainer}>
